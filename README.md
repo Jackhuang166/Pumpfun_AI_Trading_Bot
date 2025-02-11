@@ -2,6 +2,14 @@
 
 PumpFun is a sophisticated AI-powered trading bot designed to make data-driven decisions and automate trading strategies. It leverages machine learning algorithms to predict market movements and optimize trade execution, making it an ideal tool for algorithmic traders looking for an automated solution to capitalize on market opportunities.
 
+# 💬 Contact Me
+
+If you have any question or something, feel free to reach out me anytime via telegram, discord or twitter.
+<br>
+#### 🌹 You're always welcome 🌹
+
+Telegram: [@Leo](https://t.me/shinnyleo0912) <br>
+
 ## Features
 
 - **AI-Powered Trading**: Utilizes advanced machine learning algorithms to analyze market data and predict trends.
