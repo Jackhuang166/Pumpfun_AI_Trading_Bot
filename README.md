@@ -1,86 +1,133 @@
-# PumpFun AI Trading Bot
+# Pump.fun AI Comment Bot (TypeScript)
 
-PumpFun is a sophisticated AI-powered trading bot designed to make data-driven decisions and automate trading strategies. It leverages machine learning algorithms to predict market movements and optimize trade execution, making it an ideal tool for algorithmic traders looking for an automated solution to capitalize on market opportunities.
+This project is a **TypeScript CLI automation bot** for Pump.fun comments on Solana.
+It is designed for traders or communities who want to keep token discussions active with AI-assisted comment generation and automated posting.
 
-# 💬 Contact Me
+## What This Bot Is For
 
-If you have any question or something, feel free to reach out me anytime via telegram, discord or twitter.
-<br>
-#### 🌹 You're always welcome 🌹
+- Keep a token thread active with regular, varied comments
+- Speed up comment creation by generating text with OpenAI
+- Run posting from either a fresh generated wallet or an existing wallet
+- Maintain a reusable local comment bank in `data.json`
 
-Telegram: [@jackhuang166](https://t.me/jackhuang166) <br>
+## Core Features
 
-## Features
+- **AI comment generation**: Creates comment ideas from a short prompt
+- **Manual comment input**: Add your own custom comments anytime
+- **Comment library management**: Read and reuse saved comments from `data.json`
+- **Automated posting loop**: Posts comments to a target Pump token mint
+- **Proxy support**: Uses entries in `proxy_list.json` while posting
+- **Flexible wallet mode**:
+  - New temporary wallet mode
+  - Existing wallet mode via `BOT_KEY` in `.env`
 
-- **AI-Powered Trading**: Utilizes advanced machine learning algorithms to analyze market data and predict trends.
-- **Customizable Strategies**: Users can configure the trading strategies to match their preferences and risk tolerance.
-- **Real-Time Market Analysis**: Continuously monitors market conditions to identify optimal trade setups.
-- **Backtesting**: Test trading strategies on historical data to evaluate their performance before going live.
-- **Automatic Trade Execution**: Trades are automatically executed based on pre-defined strategies without manual intervention.
+## How It Works
 
-## Installation
+1. Start CLI with `npm run dev`.
+2. Choose to generate comments with AI or add comments manually.
+3. Comments are stored in `data.json`.
+4. Run the comment bot from:
+   - a new generated wallet, or
+   - your existing `.env` wallet (`BOT_KEY`).
+5. Bot logs in, gets token/session data, then posts comments to `PUMP_MINT`.
+6. Bot waits a random interval between posts using `COMMENT_MIN_INTERVAL` and `COMMENT_MAX_INTERVAL`.
 
-To run the PumpFun AI Trading Bot locally, follow the steps below:
+## Benefits For Traders
 
-### Prerequisites
+- **Save time**: reduce manual writing effort for every post
+- **Stay active**: maintain continuous engagement on token pages
+- **Simple workflow**: menu-based CLI, no complex dashboard needed
+- **Configurable pace**: control post frequency with interval settings
+- **Reusable content**: build your own comment set over time
 
-- Python 3.7 or higher
-- Pip (Python package installer)
-- Git (to clone the repository)
+## Tech Stack
 
-### Setup Instructions
+- Node.js + TypeScript
+- `ts-node` for running scripts
+- OpenAI API for AI comment generation
+- Solana `@solana/web3.js`
 
-1. Clone the repository to your local machine:
+## Prerequisites
 
-    ```bash
-    git clone https://github.com/yourusername/pumpfun-ai-trading-bot.git
-    cd pumpfun-ai-trading-bot
-    ```
+- Node.js 18+ (recommended)
+- npm
+- A valid OpenAI API key
+- A Solana wallet private key (base58) if using existing wallet mode
 
-2. Install the required dependencies:
+## Setup
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+1. Clone repository
 
-3. Configure the bot with your trading preferences:
+```bash
+git clone https://github.com/jackhuang166/Pumpfun_AI_Trading_Bot.git
+cd Pumpfun_AI_Trading_Bot
+```
 
-    - Set up your API keys from your trading platform (e.g., Binance, Coinbase).
-    - Edit the configuration file (`config.json` or `.env`) with the necessary information.
+2. Install dependencies (npm only)
 
-4. Run the bot:
+```bash
+npm install
+```
 
-    ```bash
-    python main.py
-    ```
+3. Create env file
 
-## Usage
+```bash
+copy .env.example .env
+```
 
-Once the bot is set up, it will start analyzing the market data and executing trades automatically based on the selected strategy. You can monitor the trading process by checking the logs or using the web dashboard if applicable.
+Then edit `.env` values.
 
-### Configuration
+4. Run bot
 
-The bot’s behavior can be configured by modifying the `config.json` file or environment variables. Common configurations include:
+```bash
+npm run dev
+```
 
-- API keys
-- Trading pairs (e.g., BTC/USD)
-- Risk management settings (e.g., stop loss, take profit)
-- Timeframe for trading signals (e.g., 1 minute, 5 minutes)
+## Available Scripts
 
-## Contributing
+- `npm run dev` - Start the interactive CLI bot
+- `npm run test` - Run `src/test.ts` helper script
 
-We welcome contributions! If you'd like to contribute to the development of PumpFun, please follow these steps:
+## Environment Variables
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -am 'Add new feature'`).
-4. Push to your forked repository (`git push origin feature-branch`).
-5. Open a pull request to the main repository.
+These variables are used by `src/config.ts`:
 
-## License
+- `OPENAI_KEY` - OpenAI API key for generating comments
+- `PUMP_MINT` - Pump token mint address to comment on
+- `BOT_KEY` - Base58-encoded Solana private key (required for existing wallet mode)
+- `COMMENT_MIN_INTERVAL` - Minimum delay between comments (ms)
+- `COMMENT_MAX_INTERVAL` - Maximum delay between comments (ms)
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+See `.env.example` for trader-friendly descriptions and examples.
+
+## Data Files
+
+- `data.json` - Stores comment strings
+- `proxy_list.json` - Proxy list used by comment posting
+
+## CLI Flow
+
+When running `npm run dev`, the bot shows menu options:
+
+- Generate AI comments
+- Input comments manually
+- View saved comments
+- Run comment bot (new wallet or existing wallet from `.env`)
+
+## Security Notes
+
+- Never commit your real `.env` file.
+- Keep `BOT_KEY` private.
+- Use a dedicated wallet with limited funds for automation.
+
+## Contact
+
+Telegram: [@luukogood](https://t.me/luukogood)
 
 ## Disclaimer
 
-Please note that the use of this trading bot carries inherent risks due to the volatility of the market. The creators of this bot are not responsible for any financial losses incurred through the use of this software. Use at your own risk.
+Use at your own risk. Automated bot usage may violate third-party platform policies and can result in financial or account risk.
+
+## Keywords
+
+Pump.fun bot, Pumpfun trading bot, Pumpfun comment bot, Pump.fun automation, Solana trading bot, Solana meme coin bot, token engagement bot, AI crypto bot, OpenAI trading bot, Pumpfun volume support, Pumpfun marketing bot, crypto community growth bot, on-chain token promotion bot, automated comment posting, Pump.fun CLI bot

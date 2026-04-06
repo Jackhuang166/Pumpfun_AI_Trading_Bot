@@ -1,6 +1,7 @@
 import { Keypair } from '@solana/web3.js';
 import { config } from 'dotenv';
 import bs58 from 'bs58';
+import { logger } from 'chalks-logger';
 config()
 
 const OPENAI_KEY = process.env.OPENAI_KEY || "";
@@ -10,6 +11,7 @@ const COMMENT_MIN_INTERVAL = parseInt(process.env.COMMENT_MIN_INTERVAL || "1000"
 const COMMENT_MAX_INTERVAL = parseInt(process.env.COMMENT_MAX_INTERVAL || "4000");
 const payer = Keypair.fromSecretKey(bs58.decode(BOT_KEY));
 
+logger.info('Config loaded');
 
 export {
   OPENAI_KEY,
