@@ -1,35 +1,37 @@
 {
-  "name": "pump.fun-comment-bot",
+  "name": "pumpfun-memecoin-trading-bot",
   "version": "1.0.0",
-  "description": "This is comment bot which is running on pump.fun",
-  "main": "index.ts",
+  "description": "AI-driven Pump.fun memecoin trading bot CLI",
+  "main": "dist/index.js",
   "dependencies": {
     "@solana/web3.js": "^1.95.5",
     "axios": "^1.7.8",
     "bs58": "^6.0.0",
     "chalk": "^5.4.1",
     "dotenv": "^16.4.7",
-    "fs": "^0.0.1-security",
     "https-proxy-agent": "^7.0.6",
+    "lowdb": "^7.0.1",
     "openai": "^4.77.0",
     "readline": "^1.3.0",
-    "socks-proxy-agent": "^8.0.5",
+    "pino": "^9.6.0",
     "ts-node": "^10.9.2",
-    "chalks-logger": "^1.0.0",
-    "tweetnacl": "^1.0.3",
     "typescript": "^5.7.2"
   },
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "test": "ts-node src/test.ts"
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
   },
   "keywords": [
     "pumpfun",
-    "comment",
-    "bot",
+    "trading",
+    "sniper",
+    "jito",
     "solana",
-    "dex"
+    "ai",
+    "bot",
+    "memecoin"
   ],
-  "author": "https://github.com/wizasol",
+  "author": "https://github.com/jackhuang166",
   "license": "ISC"
 }

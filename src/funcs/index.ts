@@ -7,31 +7,44 @@ import { Keypair } from "@solana/web3.js";
 import { getToken, performLogin, postCommentWithProxy } from "../bot";
 import { sleep } from "openai/core";
 
-const openai = new OpenAI({
-  apiKey: OPENAI_KEY,
-});
+const openai = OPENAI_KEY
+  ? new OpenAI({
+      apiKey: OPENAI_KEY,
+    })
+  : null;
 
 const genAIComments = () => {
   console.log("[Main Menu] > [Generate & Add Comments] > [Generate Comment with AI]\n");
+  if (!openai) {
+    console.log("OPENAI_KEY is not set. AI comment generation is disabled.");
+    console.log("You can still use manual comment input and run bot features.");
+    cliMenu('', returnToMain, false)
+    return;
+  }
   rl.question(`${genAiCommentStr}\n`, async (additionalInput) => {
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      store: true,
-      messages: [
-        { "role": "user", "content": `${additionalInput}. ${defaultInput}` },
-      ],
-    });
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        store: true,
+        messages: [
+          { "role": "user", "content": `${additionalInput}. ${defaultInput}` },
+        ],
+      });
 
-    const value = completion.choices[0].message.content || '';
+      const value = completion.choices[0].message.content || '';
+      const sentences = JSON.parse(value)
 
-    const sentences = JSON.parse(value)
-
-    if (sentences.length > 0) {
-      console.log("\nGenerated AI comments :", sentences);
-      addJson(sentences)
-      console.log(`\nSuccessfully added ${sentences.length} comments.`);
-    } else console.log("Error in Generating AI comment\n");
+      if (sentences.length > 0) {
+        console.log("\nGenerated AI comments :", sentences);
+        addJson(sentences)
+        console.log(`\nSuccessfully added ${sentences.length} comments.`);
+      } else {
+        console.log("Error in Generating AI comment\n");
+      }
+    } catch (error: any) {
+      console.error(`AI generation failed: ${error?.message || "unknown error"}`);
+    }
 
     cliMenu('', returnToMain, false)
   })

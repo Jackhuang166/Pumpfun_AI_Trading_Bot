@@ -1,133 +1,202 @@
-# Pump.fun AI Comment Bot (TypeScript)
+# Pump.fun Memecoin Trading Bot (TypeScript CLI)
 
-This project is a **TypeScript CLI automation bot** for Pump.fun comments on Solana.
-It is designed for traders or communities who want to keep token discussions active with AI-assisted comment generation and automated posting.
+Professional AI-assisted trading framework for Pump.fun and Solana memecoin workflows.  
+This project upgrades a legacy Pump.fun automation concept into a modular **Pump.fun trading bot** with token scanning, AI validation, sniping, risk controls, and portfolio management.
 
-## What This Bot Is For
+---
 
-- Keep a token thread active with regular, varied comments
-- Speed up comment creation by generating text with OpenAI
-- Run posting from either a fresh generated wallet or an existing wallet
-- Maintain a reusable local comment bank in `data.json`
+## Overview
 
-## Core Features
+This repository is designed for builders and advanced users who want to operate a **Pump.fun bot** or **Pumpfun trading bot** from a command line dashboard with configurable logic.
 
-- **AI comment generation**: Creates comment ideas from a short prompt
-- **Manual comment input**: Add your own custom comments anytime
-- **Comment library management**: Read and reuse saved comments from `data.json`
-- **Automated posting loop**: Posts comments to a target Pump token mint
-- **Proxy support**: Uses entries in `proxy_list.json` while posting
-- **Flexible wallet mode**:
-  - New temporary wallet mode
-  - Existing wallet mode via `BOT_KEY` in `.env`
+Core idea:
+1. Detect new launches quickly.
+2. Filter aggressively using AI + on-chain heuristics.
+3. Execute fast entries with priority fees.
+4. Manage risk with strict stop-loss/take-profit rules.
+5. Track results and continuously tune strategy.
 
-## How It Works
+---
 
-1. Start CLI with `npm run dev`.
-2. Choose to generate comments with AI or add comments manually.
-3. Comments are stored in `data.json`.
-4. Run the comment bot from:
-   - a new generated wallet, or
-   - your existing `.env` wallet (`BOT_KEY`).
-5. Bot logs in, gets token/session data, then posts comments to `PUMP_MINT`.
-6. Bot waits a random interval between posts using `COMMENT_MIN_INTERVAL` and `COMMENT_MAX_INTERVAL`.
+## Key Features
 
-## Benefits For Traders
+### 1) Real-time Token Scanner
+- Monitors newly launched tokens from Pump API and on-chain program logs.
+- Captures metadata including mint, creator, launch timestamp, and additional raw context.
+- Persists scan history in local storage for audit and backtesting.
 
-- **Save time**: reduce manual writing effort for every post
-- **Stay active**: maintain continuous engagement on token pages
-- **Simple workflow**: menu-based CLI, no complex dashboard needed
-- **Configurable pace**: control post frequency with interval settings
-- **Reusable content**: build your own comment set over time
+### 2) AI + Heuristic Validation Engine
+- Uses OpenAI to score each candidate token using structured prompt context.
+- Combines AI output with hard filters:
+  - social footprint checks (optional)
+  - suspicious keyword detection
+  - mint/freeze authority heuristics
+  - early momentum proxy
+- Standard output format:
+  - `score` (0-100)
+  - `reasoning`
+  - `action` (`BUY` or `SKIP`)
 
-## Tech Stack
+### 3) Sniper Execution Engine
+- Builds fast transactions with:
+  - compute unit limit instructions
+  - priority fee bidding
+  - simulation before sending
+- Supports manual and auto-snipe flows.
+- Designed for extension into full Pump.fun instruction encoding and Jito routing.
 
-- Node.js + TypeScript
-- `ts-node` for running scripts
-- OpenAI API for AI comment generation
-- Solana `@solana/web3.js`
+### 4) Bundling and Multi-Wallet Coordination
+- Bundle module can batch multiple wallet actions in one execution cycle.
+- Useful for advanced entries/exits and coordinated strategy execution.
+- Toggle with `BUNDLE_ENABLED`.
 
-## Prerequisites
+### 5) Portfolio and Trade Management
+- Tracks open and closed positions with realized PnL.
+- Supports stop-loss, take-profit, trailing stop configuration.
+- Provides live CLI summaries for active positions and performance.
 
-- Node.js 18+ (recommended)
-- npm
-- A valid OpenAI API key
-- A Solana wallet private key (base58) if using existing wallet mode
+### 6) Proxy and Reliability Layer
+- Rotates proxies from `proxy_list.json` for outbound requests.
+- Helps reduce request concentration and API rate-limit pressure.
+
+### 7) Interactive Trading Dashboard (CLI)
+- Start Scanner
+- Stop Scanner
+- View Recent Scans / Tokens
+- View Portfolio
+- Manual Snipe (by mint)
+- Exit Position
+- Settings
+- Exit
+
+---
+
+## Architecture
+
+- `src/index.ts` - bootstrap
+- `src/runtime.ts` - wiring and dependency container
+- `src/config.ts` - environment-driven configuration
+- `src/scanner.ts` - launch discovery
+- `src/analyzer.ts` - AI + heuristic scoring
+- `src/trader.ts` - execution and transaction build flow
+- `src/bundler.ts` - bundle abstraction layer
+- `src/portfolio.ts` - position lifecycle + PnL
+- `src/storage.ts` - persistent local state
+- `src/proxy.ts` - proxy rotation
+- `src/cli.ts` - dashboard and operator commands
+
+---
+
+## Execution Logic (Detailed)
+
+1. **Scanner event arrives** with mint + launch metadata.  
+2. **Analyzer enriches data** (on-chain checks + optional social checks).  
+3. **OpenAI scoring** returns structured JSON decision.  
+4. If score >= threshold and action is BUY, **sniper engine executes** with priority settings.  
+5. **Position opens** and gets tracked in portfolio store.  
+6. **Risk rules** (SL/TP/trailing/manual exit) manage lifecycle.  
+7. Results are logged for future parameter tuning.
+
+---
+
+## How to Improve Success and Profitability (Risk-Managed)
+
+No trading bot can guarantee profit. Real performance comes from risk control + disciplined iteration.
+
+Recommended framework:
+- Use small position size first (`SNIPE_AMOUNT_SOL=0.01` or less).
+- Keep strict stop-loss (`STOP_LOSS_PERCENT` low, e.g. 6-10%).
+- Start with high AI threshold (`AI_VALIDATION_THRESHOLD=80+`) to reduce noise.
+- Enable social checks, but treat social signals as weak evidence unless confirmed on-chain.
+- Track metrics weekly:
+  - win rate
+  - average R multiple
+  - max drawdown
+  - slippage/fill quality
+- Increase size only after statistically meaningful positive expectancy.
+- Use separate wallets per strategy archetype for cleaner analytics.
+
+Practical strategy improvements:
+- Add blacklist/whitelist creator wallet logic.
+- Add time-based invalidation (skip if entry is late after launch).
+- Add volatility-adaptive TP/SL.
+- Add fail-safe cooldown after consecutive losses.
+
+---
+
+## Integrations You Can Add
+
+- **RPC providers:** Helius, Triton, QuickNode
+- **Bundle relays:** Jito APIs / custom relay pipelines
+- **Data sources:** DexScreener, Birdeye, social sentiment providers
+- **Notifications:** Telegram/Discord/Slack alerts
+- **Persistence:** SQLite/Postgres for advanced analytics
+- **Observability:** structured log shipping + metrics dashboards
+
+---
 
 ## Setup
 
-1. Clone repository
-
-```bash
-git clone https://github.com/jackhuang166/Pumpfun_AI_Trading_Bot.git
-cd Pumpfun_AI_Trading_Bot
-```
-
-2. Install dependencies (npm only)
-
+1. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Create env file
-
+2. Configure environment:
 ```bash
 copy .env.example .env
 ```
 
-Then edit `.env` values.
+3. Edit `.env` with your keys and risk settings.
 
-4. Run bot
-
+4. Start CLI:
 ```bash
 npm run dev
 ```
 
-## Available Scripts
-
-- `npm run dev` - Start the interactive CLI bot
-- `npm run test` - Run `src/test.ts` helper script
+---
 
 ## Environment Variables
 
-These variables are used by `src/config.ts`:
+- `RPC_HTTP_ENDPOINT` - Solana HTTP RPC endpoint  
+- `RPC_WS_ENDPOINT` - Solana WebSocket RPC endpoint  
+- `OPENAI_KEY` - OpenAI API key  
+- `BOT_KEY` - main trading wallet private key (base58)  
+- `EXTRA_WALLET_KEYS` - optional comma-separated extra wallets  
+- `JITO_AUTH_KEY` - optional Jito auth key  
+- `PUMP_PROGRAM_ID` - Pump.fun program id  
+- `AI_VALIDATION_THRESHOLD` - minimum score for auto-buy  
+- `SNIPE_AMOUNT_SOL` - SOL size per entry  
+- `SLIPPAGE_BPS` - max slippage  
+- `PRIORITY_FEE_LAMPORTS` - fee priority for faster inclusion  
+- `STOP_LOSS_PERCENT` - stop-loss percentage  
+- `TAKE_PROFIT_PERCENT` - take-profit percentage  
+- `TRAILING_STOP_PERCENT` - trailing stop percentage  
+- `SCAN_INTERVAL_MS` - scanner poll interval  
+- `BUNDLE_ENABLED` - bundle mode toggle  
+- `SOCIAL_CHECK_ENABLED` - social checks toggle  
+- `MAX_RECENT_TOKENS` - local scan history cap  
+- `LOG_LEVEL` - logging verbosity
 
-- `OPENAI_KEY` - OpenAI API key for generating comments
-- `PUMP_MINT` - Pump token mint address to comment on
-- `BOT_KEY` - Base58-encoded Solana private key (required for existing wallet mode)
-- `COMMENT_MIN_INTERVAL` - Minimum delay between comments (ms)
-- `COMMENT_MAX_INTERVAL` - Maximum delay between comments (ms)
+---
 
-See `.env.example` for trader-friendly descriptions and examples.
+## Security and Operational Guidelines
 
-## Data Files
+- Never commit real `.env` values.
+- Use a dedicated hot wallet with limited balance.
+- Keep backups of strategy settings and trade logs.
+- Validate all execution paths on devnet/small size before scaling.
+- Monitor RPC errors and fail rates continuously.
 
-- `data.json` - Stores comment strings
-- `proxy_list.json` - Proxy list used by comment posting
-
-## CLI Flow
-
-When running `npm run dev`, the bot shows menu options:
-
-- Generate AI comments
-- Input comments manually
-- View saved comments
-- Run comment bot (new wallet or existing wallet from `.env`)
-
-## Security Notes
-
-- Never commit your real `.env` file.
-- Keep `BOT_KEY` private.
-- Use a dedicated wallet with limited funds for automation.
-
-## Contact
-
-Telegram: [@luukogood](https://t.me/luukogood)
+---
 
 ## Disclaimer
 
-Use at your own risk. Automated bot usage may violate third-party platform policies and can result in financial or account risk.
+This is a high-risk trading automation tool.  
+There is no guarantee of profits. You are fully responsible for losses, operational risk, and legal compliance in your jurisdiction.
 
-## Keywords
+---
 
-Pump.fun bot, Pumpfun trading bot, Pumpfun comment bot, Pump.fun automation, Solana trading bot, Solana meme coin bot, token engagement bot, AI crypto bot, OpenAI trading bot, Pumpfun volume support, Pumpfun marketing bot, crypto community growth bot, on-chain token promotion bot, automated comment posting, Pump.fun CLI bot
+## Search Keywords
+
+pumpfu trading bot, Pump.fun bot, Pumpfun trading bot, Pumpfun comment bot, Pump.fun automation, Solana trading bot, Solana meme coin bot, token engagement bot, AI crypto bot, OpenAI trading bot, Pumpfun volume support, Pumpfun marketing bot, crypto community growth bot, on-chain token promotion bot, automated comment posting, Pump.fun CLI bot
